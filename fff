@@ -1,0 +1,271 @@
+local GUIName = "☄️ SMHub ☄️"
+local UserInputService = game:GetService("UserInputService")
+local userIsNotificated = false
+local handImageId = "106161451378388"
+local tabsList = {}
+
+game.StarterGui:SetCore("SendNotification", { -- Credits (Please do not delete this)
+	Title = "SM's UI";
+	Text = "UI Made by @sinmirka on GitHub";
+	Duration = "7";
+})
+
+--
+
+local screenGui = Instance.new("ScreenGui") -- Menu
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local window = Instance.new("Frame")
+window.Size = UDim2.new(0, 500, 0 , 350)
+window.Position = UDim2.new(0.5, -150, 0.5, -100)
+window.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+window.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0,8)
+corner.Parent = window
+
+--
+
+local title = Instance.new("Frame") -- Title and thing u can grab to move UI
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+title.Parent = window
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = title
+
+local titleCornerSharp = Instance.new("Frame") -- Makes it so only upper corners are round
+titleCornerSharp.Size = UDim2.new(1, 0, 0, 8)
+titleCornerSharp.Position = UDim2.new(0, 0, 1, -8)
+titleCornerSharp.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+titleCornerSharp.BorderSizePixel = 0
+titleCornerSharp.Parent = title
+
+local titleText = Instance.new("TextLabel")
+titleText.Size = UDim2.new(1, -40, 1, 0)
+titleText.Position = UDim2.new(0, 10, 0, 1)
+titleText.Text = GUIName
+titleText.TextSize = 18
+titleText.Font = Enum.Font.GothamBold
+titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleText.BackgroundTransparency = 1
+titleText.TextXAlignment = Enum.TextXAlignment.Left
+titleText.Parent = title
+
+--
+
+local closeButton = Instance.new("TextButton") -- Close button
+closeButton.Size = UDim2.new(0, 30, 1, 0)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.FredokaOne
+closeButton.TextSize = 10
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+closeButton.Parent = title
+
+local closeButtonCorner = Instance.new("UICorner")
+closeButtonCorner.CornerRadius = UDim.new(0, 8)
+closeButtonCorner.Parent = closeButton
+
+closeButton.MouseButton1Click:Connect(function()
+	window:Destroy()
+end)
+
+local minimizeButton = Instance.new("TextButton") -- Minimize Button
+minimizeButton.Size = UDim2.new(0, 30, 1, 0)
+minimizeButton.Position = UDim2.new(1, -61, 0, 0)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.FredokaOne
+minimizeButton.TextSize = 17
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+minimizeButton.Parent = title
+
+local minimizeButtonCorner = Instance.new("UICorner")
+minimizeButtonCorner.CornerRadius = UDim.new(0, 8)
+minimizeButtonCorner.Parent = minimizeButton
+
+minimizeButton.MouseButton1Click:Connect(function()
+	window.Visible = false
+	if userIsNotificated == false then
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "UI is hidden";
+			Text = "Press 'Insert' to open/hide UI";
+			Duration = "5";
+		})
+	end
+	userIsNotificated = true
+end)
+
+--
+
+local dragging = false -- Mouse button 1 processing
+local startPos
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		startPos = input.Position
+	end
+end)
+
+title.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input) -- Drag function
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - startPos
+		window.Position = UDim2.new(
+			window.Position.X.Scale,
+			window.Position.X.Offset + delta.X,
+			window.Position.Y.Scale,
+			window.Position.Y.Offset + delta.Y
+		)
+		startPos = input.Position
+	end
+end)
+
+--
+
+title.InputBegan:Connect(function(input) -- debug DELETE THIS!! debug DELETE THIS!! debug DELETE THIS!! debug DELETE THIS!! debug DELETE THIS!!
+    print("type:", input.UserInputType)
+    print("position:", input.Position)
+end)
+
+
+UserInputService.InputBegan:Connect(function(input) -- Minimize by pressing insert
+	if input.KeyCode == Enum.KeyCode.Insert then
+		window.Visible = not window.Visible
+	end
+end)
+
+--
+
+local tabZone = Instance.new("Frame") -- Tab zone (where you create tabs)
+tabZone.Size = UDim2.new(0, 120, 1, -43)
+tabZone.Position = UDim2.new(0, 7, 0, 36)
+tabZone.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+tabZone.BorderSizePixel = 0
+tabZone.Parent = window
+
+local tabZoneCorner = Instance.new("UICorner")
+tabZoneCorner.CornerRadius = UDim.new(0, 8)
+tabZoneCorner.Parent = tabZone
+
+--
+
+function createTab(tabName) -- Tab create function
+	local TabY = 2
+	local tabButton = Instance.new("TextButton")
+	tabButton.Name = tabName
+	tabButton.Text = tabName
+	tabButton.Size = UDim2.new(1, -4, 0, 30)
+	tabButton.Position = UDim2.new(0, 2, 0, TabY + (#tabsList*35))
+	TabY = 5
+	tabButton.Font = Enum.Font.GothamBold
+	tabButton.TextSize = 15
+	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	tabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	tabButton.Parent = tabZone
+
+	local tabButtonCorner = Instance.new("UICorner")
+	tabButtonCorner.CornerRadius = UDim.new(0, 8)
+	tabButtonCorner.Parent = tabButton
+
+	local contentFrame = Instance.new("Frame")
+	contentFrame.Name = tabName.."_Content"
+	contentFrame.Size = UDim2.new(1, -140, 1, -43)
+	contentFrame.Position = UDim2.new(0, 133, 0, 36)
+	contentFrame.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+	contentFrame.BackgroundTransparency = 0
+	contentFrame.Visible = false
+	contentFrame.Parent = window
+
+	local contentFrameCorner = Instance.new("UICorner")
+	contentFrameCorner.CornerRadius = UDim.new(0, 8)
+	contentFrameCorner.Parent = contentFrame
+
+	table.insert(tabsList, { -- Writing the data to the table
+		name = tabName,
+		tab = tabButton,
+		content = contentFrame
+	})
+
+	if #tabsList == 1 then
+		contentFrame.Visible = true
+	end
+
+	tabButton.MouseButton1Click:Connect(function()
+		for _, tab in pairs(tabsList) do
+			tab.content.Visible = false
+		end
+		contentFrame.Visible = true
+	end)
+end
+
+--
+function createButton(tabName, buttonText) -- Button create function
+    local targetContent
+    for _, tab in pairs(tabsList) do
+        if tab.name == tabName then
+            targetContent = tab.content
+            break
+        end
+    end
+
+    if not targetContent then
+        warn("Вкладка '"..tabName.."' не найдена!")
+        return
+    end
+
+    local buttonCount = 0
+    for _, child in ipairs(targetContent:GetChildren()) do
+        if child:IsA("TextButton") then
+            buttonCount += 1
+        end
+    end
+
+    local ButtonY = 2
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, -4, 0, 30)
+    button.Position = UDim2.new(0, 2, 0, ButtonY + (buttonCount * 35))
+    button.Text = buttonText
+    button.TextSize = 15
+    button.TextXAlignment = Enum.TextXAlignment.Left
+    button.Name = buttonText
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.GothamBold
+    button.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    button.Parent = targetContent
+    ButtonY = 5
+
+	local buttonCorner = Instance.new("UICorner")
+	buttonCorner.CornerRadius = UDim.new(0, 8)
+	buttonCorner.Parent = button
+
+	local handIcon = Instance.new("ImageLabel")
+	handIcon.Name = "HandIcon"
+	handIcon.Image = "rbxassetid://106161451378388"
+	handIcon.Size = UDim2.new(0, 25, 0, 25)
+	handIcon.Position = UDim2.new(1, -10, 0, 0)
+	handIcon.BackgroundTransparency = 1
+	handIcon.Parent = button
+
+	return button
+end
+
+
+createTab("etet")
+createTab("etet2")
+createTab("etet3")
+
+createButton("etet", "ez")
+createButton("etet2", "eee")
+createButton("etet2", "ee22e")
